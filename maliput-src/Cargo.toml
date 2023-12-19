@@ -1,0 +1,15 @@
+[package]
+name = "maliput-src"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+# Dummy `links` value so that we can pass DEP_* environment variables to our
+# dependents.
+# See: https://github.com/rust-lang/cargo/issues/7846
+links = "maliput-src"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+[build-dependencies]
+cmake = "0.1"

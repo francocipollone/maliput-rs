@@ -1,18 +1,23 @@
-extern crate bindgen;
-
-use std::{env, path::PathBuf};
+use std::env;
+use std::error::Error;
+use std::fs;
+use std::path::PathBuf;
 
 const LIB_NAME: &str = "maliput";
 const MALIPUT_PATH: &str = "dep/maliput";
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let install_dir = out_dir.join("install");
+    fs::create_dir_all(&install_dir)?;
 
     let original_dir = env::current_dir().unwrap();
+
+    println!("cargo:root={}", install_dir.display());
 
     println!("cargo:rustc-link-lib=dylib={}", "stdc++");
     println!("cargo:rustc-link-arg=-l{}", "stdc++");
     println!("cargo:rustc-link-search={}", env::var("OUT_DIR").unwrap());
-    println!("cargo:rerun-if-changed=maliput_wrapper.h");
 
     // build lib
     env::set_current_dir(MALIPUT_PATH)
@@ -26,7 +31,7 @@ fn main() {
     let code = std::process::Command::new("cmake")
         .arg("..")
         // .arg("-DCMAKE_BUILD_TYPE=Release")
-        .arg("-DCMAKE_INSTALL_PREFIX=install")
+        .arg(format!("-DCMAKE_INSTALL_PREFIX={}", install_dir.display()))
         .arg("-DBUILD_TESTING=OFF")
         .status()
         .expect("Failed to generate build script");
@@ -52,31 +57,13 @@ fn main() {
         panic!("Failed to install lib");
     }
 
-    let out_dir = env::var("OUT_DIR").unwrap();
-
-  // move maliput/math/libmaliput_math.so to where Cargo expects it (OUT_DIR)
-    std::fs::copy(
-      "install/lib/libmaliput_math.so",
-      format!("{}/libmaliput_math.so", out_dir),
-  )
-  .expect("Failed to copy math so");
+    env::set_current_dir(original_dir)
+        .unwrap_or_else(|_| panic!("Unable to change directory to original dir"));
 
 
-  println!("cargo:rustc-link-lib=maliput_math");
 
-  env::set_current_dir(original_dir)
-    .unwrap_or_else(|_| panic!("Unable to change directory to original dir"));
+    println!("cargo:rustc-env=INSTALL_DIR={}", install_dir.display());
+    println!("cargo:CXXBRIDGE_DIR0={}/include", install_dir.display());
 
-  let bindings = bindgen::Builder::default()
-    .header("maliput_wrapper.h")
-    .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-    .clang_args(&["-x", "c++"])
-    .clang_arg(format!("-I./dep/maliput/include").as_str())
-    .generate()
-    .expect("Unable to generate bindings");
-
-  // Write the bindings to the $OUT_DIR/bindings.rs file.
-  let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-  bindings.write_to_file(out_path.join("bindings.rs")).expect("Couldn't write bindings!");
-
+    Ok(())
 }
