@@ -1,13 +1,6 @@
-[package]
-name = "maliput-sys"
-version = "0.1.0"
-edition = "2021"
-build = "build.rs"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-
-[build-dependencies]
-bindgen = { version = "0.66", default-features = false, features = ["runtime", "which-rustfmt"] }
-cmake = "0.1"
+members = [
+    "maliput-src",
+    "maliput-sys",
+]
