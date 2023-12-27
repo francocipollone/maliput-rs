@@ -7,6 +7,7 @@ const LIB_NAME: &str = "maliput";
 const MALIPUT_PATH: &str = "dep/maliput";
 
 fn main() -> Result<(), Box<dyn Error>> {
+    println!("cargo:rerun-if-changed=src/lib.rs");
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let install_dir = out_dir.join("install");
     fs::create_dir_all(&install_dir)?;
