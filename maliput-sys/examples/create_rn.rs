@@ -1,5 +1,4 @@
-// use maliput_sys::maliput::math::saturate;
-use maliput_sys::ffi;
+use maliput_sys::plugin::ffi::CreateRoadNetworkWrapper;
 
 fn main() {
   println!("\nExecuting create_rn.rs example: ");
@@ -10,7 +9,7 @@ fn main() {
     "opendrive_file:/opt/ros/foxy/share/maliput_malidrive/resources/odr/TShapeRoad.xodr".to_string(),
   ];
 
-  let road_network = ffi::CreateRoadNetworkWrapper(&road_network_loader_id, &properties);
+  let road_network = CreateRoadNetworkWrapper(&road_network_loader_id, &properties);
   let road_geometry = road_network.road_geometry();
 
   // Excercise the RoadGeometry bindings.

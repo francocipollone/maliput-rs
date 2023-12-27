@@ -1,4 +1,4 @@
-## maliput-rust
+## maliput-rs
 
 This repos serves as an exploration of Rust bindings using maliput (C++) as guinea pig.
 
@@ -27,5 +27,5 @@ cargo build
 
 3. Run example
 ```
-cargo --example run saturate
+cargo --example run create_rn
 ```

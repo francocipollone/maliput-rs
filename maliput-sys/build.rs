@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("cargo:rustc-link-lib=maliput_math");
     println!("cargo:rustc-link-lib=maliput_plugin");
 
-    cxx_build::bridge("src/lib.rs")
+    cxx_build::bridges(["src/api.rs", "src/plugin.rs"])
         .flag_if_supported("-std=c++17")
         .include(&include_paths[0])
         .include(&include_paths[1])
