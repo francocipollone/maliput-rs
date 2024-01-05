@@ -34,21 +34,5 @@ fn main() -> Result<(), Box<dyn Error>> {
     let bazel_bin_dir = install_dir.join("bazel-bin");
 
     println!("cargo:rustc-env=INSTALL_DIR={}", bazel_bin_dir.display());
-
-    //---Header files---
-    let virtual_includes_path = bazel_bin_dir.join("_virtual_includes");
-    let mut virtual_includes = Vec::new();
-    for entry in fs::read_dir(virtual_includes_path)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_dir() {
-            virtual_includes.push(path);
-        }
-    }
-
-    // Add all the virtual includes to CXXBRIDGE_DIR.
-    for (i, path) in virtual_includes.iter().enumerate() {
-        println!("cargo:CXXBRIDGE_DIR{}={}", i, path.display());
-    }
     Ok(())
 }
