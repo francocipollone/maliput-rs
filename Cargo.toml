@@ -4,4 +4,5 @@ resolver = "2"
 members = [
     "maliput-src",
     "maliput-sys",
+    "maliput_malidrive-src",
 ]
